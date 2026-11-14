@@ -1,99 +1,424 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <title>NGIV File Receiver</title>
 <meta name="description" content="Send files securely to Nimref Gabriel IV.">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a1122" media="(prefers-color-scheme: dark)">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="NGIV Files">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-:root{--bg:#eef4ff;--card:#fff;--ink:#0f1b33;--mut:#62728f;--line:#e2e8f3;--pri:#2563eb;--acc:#fbbf24;--sh:0 1px 2px rgba(15,27,51,.06),0 12px 32px rgba(15,27,51,.1)}
-@media(prefers-color-scheme:dark){:root{--bg:#0a1122;--card:#111c35;--ink:#eaf1ff;--mut:#93a6c9;--line:#1f2d4d;--pri:#5b9bff;--acc:#fcd34d;--sh:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4)}}
-*{box-sizing:border-box}[hidden]{display:none!important}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-button{font:inherit;cursor:pointer}:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-#fr{flex:1;min-height:0;width:100%;border:0;background:var(--bg)}
-#bar{flex:none;display:flex;align-items:center;gap:10px;padding:8px 12px;color:#fff;font-size:.9rem;background:linear-gradient(90deg,#0b1730,#1d4ed8)}
-#bar span{flex:1;min-width:0}
-.pill{border:0;border-radius:99px;padding:6px 14px;font-weight:700;background:var(--acc);color:#1a1300}
-.x{border:0;background:none;color:#fff;font-size:1.2rem;opacity:.8;padding:2px 6px}
-#splash,#panel{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:radial-gradient(60% 45% at 85% 0%,color-mix(in srgb,var(--acc) 24%,transparent),transparent),radial-gradient(70% 55% at 0% 100%,color-mix(in srgb,var(--pri) 22%,transparent),transparent),var(--bg)}
-#splash{z-index:10;transition:opacity .4s}#splash.off{opacity:0;pointer-events:none}#panel{z-index:12}
-.sp{text-align:center}.sp img{width:92px;height:92px;border-radius:26px;box-shadow:var(--sh);display:block;margin:0 auto 18px}
-.sp h1{font-size:1.6rem;letter-spacing:-.02em;margin:0}.sp p{margin:4px 0 0;color:var(--mut)}
-.ld{width:170px;height:5px;border-radius:9px;background:var(--line);margin:24px auto 0;overflow:hidden}
-.ld i{display:block;width:40%;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--pri),var(--acc));animation:sl 1.2s ease-in-out infinite}
-@keyframes sl{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
-@media(prefers-reduced-motion:reduce){.ld i{animation:none;width:100%}}
-#slow{margin-top:22px;font-size:.9rem;color:var(--mut)}#slow a{color:var(--pri);font-weight:600}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);padding:28px;max-width:420px;width:100%;text-align:center}
-.ico{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;font-size:1.7rem;margin:0 auto 14px;background:color-mix(in srgb,var(--acc) 26%,transparent)}
-.card h2{margin:0 0 6px;font-size:1.25rem;letter-spacing:-.01em}.card p{margin:0;color:var(--mut)}
-.row{display:grid;gap:10px;margin-top:20px}
-.btn{border-radius:14px;padding:13px 18px;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;display:block}
-.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}
-#sheet{position:fixed;inset:0;z-index:20;background:rgba(10,20,45,.55);display:flex;align-items:flex-end;justify-content:center}
-#sheet .card{max-width:480px;border-radius:24px 24px 0 0;text-align:left;padding-bottom:max(28px,env(safe-area-inset-bottom))}
-#sheet h2{text-align:center}ol{list-style:none;counter-reset:s;padding:0;margin:18px 0 0;display:grid;gap:14px}
-li{counter-increment:s;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:center}
-li:before{content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--pri);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
-svg{vertical-align:-3px}
-#toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);z-index:15;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;max-width:92vw;box-shadow:var(--sh)}
-</style></head><body>
+:root{
+  --bg:#f6f8fc; --ink:#0f1b33; --mut:#5c6b86; --line:#e3e8f2; --card:#ffffff;
+  --navy:#0f1b33; --gold:#e0b13c; --gold-soft:#f7d97a; --gold-ink:#241a00; --blue:#2563eb;
+  --sh:0 1px 2px rgba(15,27,51,.06),0 18px 40px rgba(15,27,51,.14);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0b1020; --ink:#eaf1ff; --mut:#93a6c9; --line:#1e2b49; --card:#121c33;
+    --sh:0 1px 2px rgba(0,0,0,.5),0 18px 40px rgba(0,0,0,.5);
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{
+  background:var(--bg);color:var(--ink);overscroll-behavior:none;-webkit-text-size-adjust:100%;
+  font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:10px}
+
+/* ---------- the site itself ---------- */
+#app{
+  position:fixed;inset:0;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+#fr{display:block;flex:1;min-height:0;width:100%;border:0;background:var(--bg)}
+
+/* ---------- splash ---------- */
+#splash{
+  position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:24px;
+  background:#0b1020;color:#fff;text-align:center;
+  background-image:radial-gradient(70% 50% at 50% 0%,rgba(224,177,60,.20),transparent 70%);
+  transition:opacity .45s ease,visibility .45s ease;
+}
+#splash.off{opacity:0;visibility:hidden;pointer-events:none}
+.brand{max-width:340px}
+.brand img{width:96px;height:96px;border-radius:26px;display:block;margin:0 auto 20px;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.brand h1{margin:0;font-size:1.55rem;font-weight:800;letter-spacing:-.02em}
+.brand p{margin:7px 0 0;font-size:.95rem;color:#9fb0cf}
+.ld{width:168px;height:4px;border-radius:99px;background:rgba(255,255,255,.14);margin:26px auto 0;overflow:hidden}
+.ld i{display:block;width:38%;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold-soft));animation:slide 1.15s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
+@media (prefers-reduced-motion:reduce){.ld i{animation:none;width:100%}}
+#slow{margin-top:24px;font-size:.9rem;color:#9fb0cf}
+#slow a{color:var(--gold-soft);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(247,217,122,.45);padding-bottom:1px}
+
+/* ---------- error / offline panel ---------- */
+#panel{
+  position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:22px;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(8px);
+}
+.card{
+  width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);
+  border-radius:24px;box-shadow:var(--sh);padding:26px;text-align:center;
+}
+.badge{
+  width:60px;height:60px;border-radius:20px;margin:0 auto 16px;display:grid;place-items:center;
+  font-size:1.6rem;background:color-mix(in srgb,var(--gold) 22%,transparent);
+}
+.card h2{margin:0 0 8px;font-size:1.2rem;letter-spacing:-.01em}
+.card p{margin:0;font-size:.95rem;color:var(--mut)}
+.actions{display:grid;gap:10px;margin-top:22px}
+.btn{
+  display:block;width:100%;padding:13px 18px;border-radius:14px;font-weight:700;text-decoration:none;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--gold-ink)}
+
+/* ---------- install chip ---------- */
+#chip{
+  position:fixed;z-index:45;right:calc(14px + env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));
+  display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:99px;
+  background:var(--gold);color:var(--gold-ink);font-weight:800;font-size:.9rem;
+  box-shadow:0 8px 24px rgba(15,27,51,.28);opacity:0;transform:translateY(10px);
+  transition:opacity .3s ease,transform .3s ease;
+}
+#chip.on{opacity:1;transform:none}
+#chip svg{flex:none}
+
+/* ---------- install sheet ---------- */
+#sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(6,12,28,.52);opacity:0;transition:opacity .25s ease}
+#sheet.on{opacity:1}
+.sheet-card{
+  width:100%;max-width:520px;background:var(--card);
+  border-radius:26px 26px 0 0;padding:18px 22px calc(20px + env(safe-area-inset-bottom));
+  box-shadow:0 -12px 44px rgba(0,0,0,.3);transform:translateY(16px);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1);
+}
+#sheet.on .sheet-card{transform:none}
+.grip{width:42px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 18px}
+.sheet-head{display:flex;gap:14px;align-items:center}
+.sheet-head img{width:52px;height:52px;border-radius:15px;flex:none}
+.sheet-head h2{margin:0;font-size:1.05rem;letter-spacing:-.01em}
+.sheet-head p{margin:3px 0 0;font-size:.86rem;color:var(--mut)}
+.steps{list-style:none;counter-reset:s;padding:0;margin:18px 0 0;display:grid;gap:12px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;font-size:.92rem}
+.steps li>span{min-width:0}
+.steps li::before{
+  content:counter(s);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  font-size:.8rem;font-weight:800;background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue);
+}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;z-index:60;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));
+  transform:translate(-50%,12px);max-width:92vw;padding:11px 16px;border-radius:14px;
+  background:var(--ink);color:var(--bg);font-weight:600;font-size:.9rem;text-align:center;
+  box-shadow:var(--sh);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+
 <div id="app">
- <div id="bar" hidden><span id="barText">Install the app for one-tap access.</span><button class="pill" id="barBtn">Install</button><button class="x" id="barX" aria-label="Dismiss">&times;</button></div>
- <iframe id="fr" title="NGIV File Receiver" allow="clipboard-write; fullscreen"></iframe>
+  <iframe id="fr" title="NGIV File Receiver" allow="clipboard-write; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 </div>
-<div id="splash"><div class="sp"><img src="icon-192.png" alt=""><h1 id="appName">NGIV File Receiver</h1><p id="tag">Upload to the limit.</p><div class="ld"><i></i></div><div id="slow" hidden>Taking longer than usual. <a id="direct" href="#">Open it directly</a></div></div></div>
-<div id="panel" hidden><div class="card"><div class="ico" id="pIco"></div><h2 id="pTitle"></h2><p id="pMsg"></p><div class="row" id="pBtns"></div></div></div>
-<div id="sheet" hidden><div class="card"><h2>Add to your home screen</h2>
- <ol id="iosSteps"><li>Tap the Share button <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg> in Safari's toolbar.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b> in the top corner.</li></ol>
- <ol id="andSteps" hidden><li>Open your browser menu (the three dots).</li><li>Tap <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Tap <b>Install</b> or <b>Add</b> to confirm.</li></ol>
- <div class="row"><button class="btn p" id="sheetOk">Got it</button></div></div></div>
-<div id="toast" hidden></div>
+
+<div id="splash" role="status" aria-live="polite">
+  <div class="brand">
+    <img src="icon-192.png" alt="">
+    <h1 id="appName">NGIV File Receiver</h1>
+    <p id="tag">Upload to the limit.</p>
+    <div class="ld" aria-hidden="true"><i></i></div>
+    <div id="slow" hidden>Still loading. <a id="direct" href="#" target="_blank" rel="noopener">Open it directly</a></div>
+  </div>
+</div>
+
+<div id="panel" hidden>
+  <div class="card" role="alertdialog" aria-modal="true" aria-labelledby="pTitle" aria-describedby="pMsg">
+    <div class="badge" id="pIco" aria-hidden="true"></div>
+    <h2 id="pTitle"></h2>
+    <p id="pMsg"></p>
+    <div class="actions" id="pBtns"></div>
+  </div>
+</div>
+
+<button id="chip" hidden aria-label="Install NGIV File Receiver">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11M7.5 9.5 12 14l4.5-4.5M5 18.5h14"/></svg>
+  Install app
+</button>
+
+<div id="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="grip" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <img src="icon-192.png" alt="">
+      <div>
+        <h2 id="sheetTitle">Keep NGIV one tap away</h2>
+        <p>Its own icon, opens full screen, no browser bar.</p>
+      </div>
+    </div>
+    <ol class="steps" id="iosSteps" hidden>
+      <li><span>Tap the <b>Share</b> button in Safari's toolbar.</span></li>
+      <li><span>Scroll down and tap <b>Add to Home Screen</b>.</span></li>
+      <li><span>Tap <b>Add</b> in the top corner to finish.</span></li>
+    </ol>
+    <ol class="steps" id="andSteps" hidden>
+      <li><span>Open your browser menu (the three dots).</span></li>
+      <li><span>Tap <b>Install app</b> or <b>Add to Home screen</b>.</span></li>
+      <li><span>Confirm with <b>Install</b> or <b>Add</b>.</span></li>
+    </ol>
+    <div class="actions">
+      <button class="btn gold" id="sheetInstall" hidden>Install app</button>
+      <button class="btn" id="sheetOk">Not now</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
 <script src="config.js"></script>
 <script>
-(function(){
-const C=window.NGIV||{},$=id=>document.getElementById(id),LS={g:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-const valid=/^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+\/|macros\/)s\/[^\/]+\/exec$/.test(C.EXEC_URL||'');
-const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-let loaded=false,deferred=null,timer,toastT;
-$('appName').textContent=C.APP_NAME||'NGIV File Receiver';$('tag').textContent=C.TAGLINE||'';document.title=C.APP_NAME||document.title;
-function panel(ico,title,msg,btns){$('splash').hidden=true;$('pIco').textContent=ico;$('pTitle').textContent=title;$('pMsg').textContent=msg;const b=$('pBtns');b.textContent='';
- btns.forEach(x=>{const e=document.createElement(x.href?'a':'button');e.className='btn'+(x.p?' p':'');e.textContent=x.t;if(x.href){e.href=x.href;e.target='_blank';e.rel='noopener'}else e.onclick=x.fn;b.appendChild(e)});$('panel').hidden=false}
-function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,4000)}
-function start(){
- $('panel').hidden=true;
- if(!valid)return panel('🔧','Almost there','The app link has not been added yet. Open config.js in your GitHub repository and paste your Apps Script web app link between the quote marks.',[]);
- if(!navigator.onLine)return panel('📡','You are offline','Connect to the internet and try again.',[{t:'Try again',p:1,fn:start}]);
- $('splash').hidden=false;$('splash').classList.remove('off');loaded=false;
- const url=C.EXEC_URL+location.search;$('direct').href=url;$('fr').src=url;
- clearTimeout(timer);setTimeout(()=>{if(!loaded)$('slow').hidden=false},8000);
- timer=setTimeout(()=>{if(!loaded)panel('⏳','This is taking too long','The upload page did not respond. Check your connection and try again.',[{t:'Try again',p:1,fn:start},{t:'Open it directly',href:url}])},(C.LOAD_TIMEOUT_SECONDS||25)*1000);
-}
-$('fr').addEventListener('load',()=>{if(!$('fr').getAttribute('src'))return;loaded=true;clearTimeout(timer);setTimeout(()=>{$('splash').classList.add('off')},500);setTimeout(()=>{$('splash').hidden=true;offer()},1100)});
-addEventListener('offline',()=>{if(loaded)toast('You are offline. Reconnect to keep uploading.')});
-addEventListener('online',()=>{if(!loaded&&valid)start();else if(loaded)toast('Back online')});
-function offer(){
- if(!C.SHOW_INSTALL||standalone||!loaded)return;
- const at=Number(LS.g('ngivInstallX')||0);if(Date.now()-at<12096e5)return;
- if(deferred){$('barText').textContent='Install the app for one-tap access.';$('barBtn').textContent='Install';$('bar').hidden=false}
- else if(ios){$('barText').textContent='Add this app to your home screen.';$('barBtn').textContent='How';$('bar').hidden=false}
-}
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;offer()});
-addEventListener('appinstalled',()=>{$('bar').hidden=true;deferred=null});
-$('barBtn').onclick=()=>{if(deferred){deferred.prompt();deferred.userChoice.finally(()=>{deferred=null;$('bar').hidden=true})}else{$('iosSteps').hidden=!ios;$('andSteps').hidden=ios;$('sheet').hidden=false}};
-$('barX').onclick=()=>{LS.s('ngivInstallX',Date.now());$('bar').hidden=true};
-$('sheetOk').onclick=()=>$('sheet').hidden=true;
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-start();
+(function () {
+  'use strict';
+
+  var C = window.NGIV || {};
+  var $ = function (id) { return document.getElementById(id); };
+  var LS = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  var EXEC = String(C.EXEC_URL || '').trim();
+  var configured = /^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+\/|macros\/)s\/[^\/]+\/(exec|dev)\/?$/.test(EXEC);
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var TIMEOUT_MS = Math.max(8, Number(C.LOAD_TIMEOUT_SECONDS) || 25) * 1000;
+  var REMIND_MS = 14 * 24 * 60 * 60 * 1000;
+
+  var deferredPrompt = null;
+  var loadedOnce = false;
+  var sheetOpen = false;
+  var slowTimer = null, failTimer = null, toastTimer = null;
+
+  /* ---------- text ---------- */
+  $('appName').textContent = C.APP_NAME || 'NGIV File Receiver';
+  $('tag').textContent = C.TAGLINE || '';
+  document.title = C.APP_NAME || document.title;
+
+  /* ---------- toast ---------- */
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.hidden = false;
+    requestAnimationFrame(function () { t.classList.add('on'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      t.classList.remove('on');
+      setTimeout(function () { t.hidden = true; }, 220);
+    }, 4200);
+  }
+
+  /* ---------- full screen message ---------- */
+  function showPanel(icon, title, message, buttons) {
+    $('splash').hidden = true;
+    $('pIco').textContent = icon;
+    $('pTitle').textContent = title;
+    $('pMsg').textContent = message;
+    var box = $('pBtns');
+    box.textContent = '';
+    (buttons || []).forEach(function (b) {
+      var el = document.createElement(b.href ? 'a' : 'button');
+      el.className = 'btn' + (b.style ? ' ' + b.style : '');
+      el.textContent = b.label;
+      if (b.href) { el.href = b.href; el.target = '_blank'; el.rel = 'noopener'; }
+      else { el.addEventListener('click', b.run); }
+      box.appendChild(el);
+    });
+    if (buttons && buttons.length) {
+      var first = box.firstChild;
+      if (first && first.focus) setTimeout(function () { first.focus({ preventScroll: true }); }, 60);
+    }
+    $('panel').hidden = false;
+  }
+
+  function hidePanel() { $('panel').hidden = true; }
+
+  /* ---------- start / load the uploader ---------- */
+  function start() {
+    hidePanel();
+    hideChip();
+
+    if (!configured) {
+      return showPanel('🔗', 'The app link is missing',
+        'This copy of the app has no upload link yet. Open config.js and paste your Apps Script link between the quote marks — it must start with https:// and end with /exec.',
+        []);
+    }
+    if (!navigator.onLine) {
+      return showPanel('📡', 'You are offline',
+        'Files can only be sent while you are connected to the internet. Reconnect and try again.',
+        [{ label: 'Try again', style: 'primary', run: start }]);
+    }
+
+    loadedOnce = false;
+    $('slow').hidden = true;
+    $('splash').hidden = false;
+    $('splash').classList.remove('off');
+
+    var url = EXEC + location.search;
+    $('direct').href = url;
+    $('fr').src = url;
+
+    clearTimeout(slowTimer);
+    clearTimeout(failTimer);
+    slowTimer = setTimeout(function () { if (!loadedOnce) $('slow').hidden = false; }, 8000);
+    failTimer = setTimeout(function () {
+      if (!loadedOnce) {
+        showPanel('⏳', 'This is taking too long',
+          'The upload page did not answer. Your connection may be slow, or the app may be busy. Nothing was uploaded.',
+          [{ label: 'Try again', style: 'primary', run: start },
+           { label: 'Open it in the browser', href: url }]);
+      }
+    }, TIMEOUT_MS);
+  }
+
+  $('fr').addEventListener('load', function () {
+    if (!$('fr').getAttribute('src') || loadedOnce) return;
+    loadedOnce = true;
+    clearTimeout(slowTimer);
+    clearTimeout(failTimer);
+    $('slow').hidden = true;
+    setTimeout(function () { $('splash').classList.add('off'); }, 220);
+    setTimeout(function () { $('splash').hidden = true; offerInstall(); }, 760);
+  });
+
+  /* ---------- install: chip ---------- */
+  function dismissedRecently() {
+    var at = Number(LS.get('ngivInstallDismissed') || 0);
+    return Date.now() - at < REMIND_MS;
+  }
+
+  function showChip() {
+    if (standalone || !C.SHOW_INSTALL || dismissedRecently()) return;
+    var c = $('chip');
+    c.hidden = false;
+    requestAnimationFrame(function () { c.classList.add('on'); });
+  }
+
+  function hideChip() {
+    var c = $('chip');
+    c.classList.remove('on');
+    c.hidden = true;
+  }
+
+  function offerInstall() {
+    if (standalone || !C.SHOW_INSTALL || dismissedRecently()) return;
+    if (deferredPrompt || isIOS) showChip();
+  }
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (loadedOnce) showChip();
+  });
+
+  window.addEventListener('appinstalled', function () {
+    deferredPrompt = null;
+    hideChip();
+    toast('Installed. Open it from your home screen.');
+  });
+
+  /* ---------- install: sheet ---------- */
+  function openSheet() {
+    if (sheetOpen) return;
+    sheetOpen = true;
+
+    var manual = !deferredPrompt;               // no real prompt: show the do-it-yourself steps
+    $('iosSteps').hidden = !(manual && isIOS);
+    $('andSteps').hidden = !(manual && !isIOS);
+    $('sheetInstall').hidden = !deferredPrompt;
+    $('sheetOk').textContent = deferredPrompt ? 'Not now' : 'Got it';
+
+    $('sheet').hidden = false;
+    requestAnimationFrame(function () { $('sheet').classList.add('on'); });
+    try { history.pushState({ ngivSheet: 1 }, ''); } catch (e) {}
+
+    var focusTarget = deferredPrompt ? $('sheetInstall') : $('sheetOk');
+    setTimeout(function () { focusTarget.focus({ preventScroll: true }); }, 80);
+  }
+
+  function closeSheet(remember) {
+    if (!sheetOpen) return;
+    sheetOpen = false;
+    if (remember) LS.set('ngivInstallDismissed', String(Date.now()));
+    $('sheet').classList.remove('on');
+    setTimeout(function () { $('sheet').hidden = true; }, 240);
+    hideChip();
+    if (history.state && history.state.ngivSheet) { try { history.back(); } catch (e) {} }
+  }
+
+  $('chip').addEventListener('click', openSheet);
+
+  $('sheetInstall').addEventListener('click', function () {
+    if (!deferredPrompt) return;
+    var p = deferredPrompt;
+    deferredPrompt = null;
+    try {
+      p.prompt();
+      if (p.userChoice && p.userChoice.then) {
+        p.userChoice.then(function () { closeSheet(true); }, function () { closeSheet(true); });
+        return;
+      }
+    } catch (e) {}
+    closeSheet(true);
+  });
+
+  $('sheetOk').addEventListener('click', function () { closeSheet(true); });
+
+  $('sheet').addEventListener('click', function (e) {
+    if (e.target === this) closeSheet(true);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && sheetOpen) closeSheet(true);
+  });
+
+  window.addEventListener('popstate', function () {
+    if (sheetOpen) closeSheet(false);
+  });
+
+  /* ---------- connection changes ---------- */
+  window.addEventListener('offline', function () {
+    if (loadedOnce) toast('Offline — reconnect to keep sending files.');
+  });
+
+  window.addEventListener('online', function () {
+    if (!configured) return;
+    if (!loadedOnce) start();
+    else toast('Back online');
+  });
+
+  /* ---------- service worker ---------- */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+
+  start();
 })();
 </script>
-</body></html>
+</body>
+</html>
